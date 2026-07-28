@@ -117,7 +117,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
 │   ├── quality checks silver.sql     -- Data Cleansing & Quality Assurance Queries for Silver
 │   └── quality checks gold.sql       -- Integrity Validation Queries for Gold
 └── README.md                         -- Project Documentation
-
+```
 🛠️ 5. Key ETL & Transformation Highlights
 Deduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.
 
