@@ -94,8 +94,10 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
                            |     product_line       |
                            |     start_date         |
                            +------------------------+
+```
+## 📁 4. Repository Directory Structure
 
-📁 4. Repository Directory Structure
+```text
 ├── datasets/
 │   ├── source_crm/                   -- Raw CSV files for CRM data
 │   └── source_erp/                   -- Raw CSV files for ERP data
@@ -116,11 +118,45 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
 │   └── quality checks gold.sql       -- Integrity Validation Queries for Gold
 └── README.md                         -- Project Documentation
 
-🛠️ 5. Key ETL & Transformation HighlightsDeduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.Handling Missing / Null Values: Standardized strings with TRIM() and mapped missing values (NULL, empty strings) to 'n/a'.Data Normalization: Normalized gender flags ('M', 'Male', 'F', 'Female') and marital statuses into unified clean values.Data Consistency Checks: Verified pricing equations ($Sales = Quantity \times Price$) and filtered out corrupted negative values or invalid future date ranges.SCD Handling (Type 1/Type 2 logic): Implemented historical date range calculations using LEAD() functions for product validity windows (prd_start_dt, prd_end_dt).
+🛠️ 5. Key ETL & Transformation Highlights
+Deduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.
 
-🚀 6. How to Run the ProjectPrerequisitesMicrosoft SQL Server (2019+ recommended)SQL Server Management Studio (SSMS) or Azure Data StudioExecution StepsInitialize Database: Run scripts/init_database.sql to build the Data_Warehouse DB and schemas.Create & Load Bronze Layer: Execute scripts inside scripts/Bronze/ to define tables and load CSVs, then run EXEC bronze.load_bronze;.Create & Load Silver Layer: Execute scripts inside scripts/Silver/ for DDL and ETL transformations, then run EXEC silver.load_silver;.Build Gold Layer: Execute scripts inside scripts/Gold/ to create the analytical Star Schema views.Generate Reports: Execute scripts inside scripts/reports/ to set up business intelligence reporting views.Run Quality Checks: Use the files in test Silver & gold/ to validate the integrity of your data model.
+Handling Missing / Null Values: Standardized strings with TRIM() and mapped missing values (NULL, empty strings) to 'n/a'.
 
-📊 7. Analytics & Business Reports IncludedThe repository contains pre-built Gold Reports for decision-makers:Product Report (gold.report_products): Evaluates revenue performance, product lifespan, order frequency, recency, and segments items into High-Performer, Mid-Range, or Low-Performer.Customer Report (gold.report_customers): Segments customers into VIP, Regular, or New based on spending and lifespan, while tracking Age Groups, Recency, Average Order Value (AOV), and Monthly Spend.
+Data Normalization: Normalized gender flags ('M', 'Male', 'F', 'Female') and marital statuses into unified clean values.
+
+Data Consistency Checks: Verified pricing equations (Sales = Quantity * Price) and filtered out corrupted negative values or invalid future date ranges.
+
+SCD Handling (Type 1/Type 2 logic): Implemented historical date range calculations using LEAD() functions for product validity windows (prd_start_dt, prd_end_dt).
+
+🚀 6. How to Run the Project
+Prerequisites
+
+Microsoft SQL Server (2019+ recommended)
+
+SQL Server Management Studio (SSMS) or Azure Data Studio
+
+Execution Steps
+
+Initialize Database: Run scripts/init_database.sql to build the Data_Warehouse DB and schemas.
+
+Create & Load Bronze Layer: Execute scripts inside scripts/Bronze/ to define tables and load CSVs, then run EXEC bronze.load_bronze;.
+
+Create & Load Silver Layer: Execute scripts inside scripts/Silver/ for DDL and ETL transformations, then run EXEC silver.load_silver;.
+
+Build Gold Layer: Execute scripts inside scripts/Gold/ to create the analytical Star Schema views.
+
+Generate Reports: Execute scripts inside scripts/reports/ to set up business intelligence reporting views.
+
+Run Quality Checks: Use the files in test Silver & gold/ to validate the integrity of your data model.
+
+📊 7. Analytics & Business Reports Included
+The repository contains pre-built Gold Reports for decision-makers:
+
+Product Report (gold.report_products): Evaluates revenue performance, product lifespan, order frequency, recency, and segments items into High-Performer, Mid-Range, or Low-Performer.
+
+Customer Report (gold.report_customers): Segments customers into VIP, Regular, or New based on spending and lifespan, while tracking Age Groups, Recency, Average Order Value (AOV), and Monthly Spend.
 
 👨‍💻 Author: Abdelrahman Taha
+
 📧 Contact / Portfolio: GitHub Profile | LinkedIn Profile
