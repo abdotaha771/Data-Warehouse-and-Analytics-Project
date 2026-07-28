@@ -95,7 +95,6 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
                            |     start_date         |
                            +------------------------+
 
-```
 📁 4. Repository Directory Structure
 ├── datasets/
 │   ├── source_crm/                   -- Raw CSV files for CRM data
