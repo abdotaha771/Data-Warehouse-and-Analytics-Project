@@ -160,6 +160,5 @@ The repository contains pre-built Gold Reports for decision-makers:
     
     - Customer Report (gold.report_customers): Segments customers into VIP, Regular, or New based on spending and lifespan, while tracking Age Groups, Recency, Average Order Value (AOV), and Monthly Spend.
 
-## 👨‍💻 Author: Abdelrahman Taha
 
-## 📧 Contact / Portfolio: GitHub Profile | LinkedIn Profile
+## 📧 Contact / Portfolio: [ِAbdelrahman Taha](https://abdelrahman-taha13.vercel.app/)
