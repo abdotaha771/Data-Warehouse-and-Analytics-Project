@@ -12,106 +12,89 @@ Welcome to the **Enterprise Data Warehouse and Business Intelligence Project** r
 
 The project adopts the **Medallion Architecture** pattern, structured into three progressive layers to process and elevate data quality:
 
-+------------------+      +-----------------------------------------------------------+      +-------------------+|   Source Data    |      |                      Data Warehouse                       |      |      Serving      ||                  |      |  +---------------+    +---------------+    +-----------+  |      |                   ||  - CRM CSV Files |--->--|--| Bronze Layer  |->--| Silver Layer  |->--|Gold Layer |--|-->---| - BI & Reporting  ||  - ERP CSV Files |      |  | (Raw Data)    |    | (Cleaned)     |    | (Ready)   |  |      | - Machine Learning|+------------------+      |  +---------------+    +---------------+    +-----------+  |      +-------------------++-----------------------------------------------------------+
-### 🏛️ Medallion Layers Detailed Summary
-
-| Layer | Object Type | Loading Strategy | Transformation Logic | Data Model |
-| :--- | :--- | :--- | :--- | :--- |
-| **Bronze** | Physical Tables | Batch Processing / Full Load (`TRUNCATE & INSERT` via `BULK INSERT`) | None (Raw CSV ingestion as-is) | None (Flat Tables) |
-| **Silver** | Physical Tables | Batch Processing / Full Load (`TRUNCATE & INSERT` via Stored Procedures) | Data Cleaning, Standardisation, Normalisation, Deduplication, Derived Columns, Enrichment | None (Cleansed Staging) |
-| **Gold** | Views | No Physical Storage Load (Virtual Views) | Data Integration, Business Logic Aggregations, Surrogate Key generation | **Star Schema** (Fact & Dimensions) |
-
----
-
-## 🔀 2. Data Flow & Integration Pipeline
-
-### 🔄 Data Flow Across Layers
-Data moves sequentially through the layers, ensuring maximum data integrity and quality enforcement before analytical queries run.
-
-1. **ERP & CRM Datasets** $\rightarrow$ Loaded into **Bronze Layer** (`bronze.crm_*`, `bronze.erp_*`).
-2. **Bronze Tables** $\rightarrow$ Cleansed and standardized into **Silver Layer** (`silver.crm_*`, `silver.erp_*`).
-3. **Silver Tables** $\rightarrow$ Modeled into **Gold Dimensions & Facts** (`gold.dim_customers`, `gold.dim_products`, `gold.fact_sales`).
-
-### 🔗 Source Data Integration Strategy
-- **Customer Integration**: Primary CRM Customer Records (`cust_info`) joined with ERP Location (`loc_a101`) and Demographic data (`cust_az12`) via unique ID mapping (`cst_key` / `cid`).
-- **Product Integration**: Primary CRM Product Records (`prd_info`) joined with ERP Product Category hierarchy (`px_cat_g1v2`) using category key mapping.
-
----
-
-## 🌟 3. Gold Layer Data Model (Star Schema)
-
-The analytical Gold Layer is structured as a **Star Schema**, optimized for fast aggregation and business performance reporting:
-
-                       +------------------------+
-                       |   gold.dim_customers   |
-                       +------------------------+
-                       | PK  customer_key       |
-                       |     customer_id        |
-                       |     customer_number    |
-                       |     first_name         |
-                       |     last_name          |
-                       |     country            |
-                       |     marital_status     |
-                       |     gender             |
-                       |     birth_date         |
-                       |     create_date        |
-                       +------------------------+
-                                   |
-                                   | 1
-                                   |
-                                   | N
-                      +--------------------------+
-                      |     gold.fact_sales      |
-                      +--------------------------+
-                      | FK  order_number         |
-                      | FK  product_key          |
-                      | FK  customer_key         |
-                      |     order_date           |
-                      |     shipping_date        |
-                      |     due_date             |
-                      |     sales_amount         |
-                      |     quantity             |
-                      |     price                |
-                      +--------------------------+
-                                   |
-                                   | N
-                                   |
-                                   | 1
-                       +------------------------+
-                       |   gold.dim_products    |
-                       +------------------------+
-                       | PK  product_key        |
-                       |     product_id         |
-                       |     product_number     |
-                       |     product_name       |
-                       |     category_id        |
-                       |     category           |
-                       |     subcategory        |
-                       |     maintenance        |
-                       |     cost               |
-                       |     product_line       |
-                       |     start_date         |
-                       +------------------------+
-
----
-
-## 📁 4. Repository Directory Structure
-
 ```text
-├── scripts/
-│   ├── 01_init_database.sql          -- Database and Schemas (Bronze, Silver, Gold) Creation
-│   ├── 02_ddl_bronze.sql             -- Bronze Layer DDL Statements
-│   ├── 03_load_bronze.sql            -- Stored Procedure to BULK INSERT CSVs into Bronze
-│   ├── 04_ddl_silver.sql             -- Silver Layer DDL Statements
-│   ├── 05_load_silver.sql            -- Stored Procedure for ETL (Cleaning & Transforming)
-│   ├── 06_ddl_gold.sql               -- Gold Layer Views (Star Schema)
-│   ├── 07_gold_reports.sql           -- Business Intelligence Views (Customer & Product Reports)
-│   ├── 08_data_quality_checks.sql    -- Data Cleansing & Quality Assurance Queries
-│   └── 09_analytics_exploration.sql  -- Business Analytics & Change Over Time Queries
++------------------+      +-----------------------------------------------------------+      +-------------------+
+|   Source Data    |      |                      Data Warehouse                       |      |      Serving      |
+|                  |      |  +---------------+    +---------------+    +-----------+  |      |                   |
+|  - CRM CSV Files |--->--|--| Bronze Layer  |->--| Silver Layer  |->--|Gold Layer |--|-->---| - BI & Reporting  |
+|  - ERP CSV Files |      |  | (Raw Data)    |    | (Cleaned)     |    | (Ready)   |  |      | - Machine Learning|
++------------------+      |  +---------------+    +---------------+    +-----------+  |      +-------------------+
+                          +-----------------------------------------------------------+
+
+🏛️ Medallion Layers Detailed SummaryLayerObject TypeLoading StrategyTransformation LogicData ModelBronzePhysical TablesBatch Processing / Full Load (TRUNCATE & INSERT via BULK INSERT)None (Raw CSV ingestion as-is)None (Flat Tables)SilverPhysical TablesBatch Processing / Full Load (TRUNCATE & INSERT via Stored Procedures)Data Cleaning, Standardisation, Normalisation, Deduplication, Derived Columns, EnrichmentNone (Cleansed Staging)GoldViewsNo Physical Storage Load (Virtual Views)Data Integration, Business Logic Aggregations, Surrogate Key generationStar Schema (Fact & Dimensions)🔀 2. Data Flow & Integration Pipeline🔄 Data Flow Across LayersData moves sequentially through the layers, ensuring maximum data integrity and quality enforcement before analytical queries run.ERP & CRM Datasets $\rightarrow$ Loaded into Bronze Layer (bronze.crm_*, bronze.erp_*).Bronze Tables $\rightarrow$ Cleansed and standardized into Silver Layer (silver.crm_*, silver.erp_*).Silver Tables $\rightarrow$ Modeled into Gold Dimensions & Facts (gold.dim_customers, gold.dim_products, gold.fact_sales).🔗 Source Data Integration StrategyCustomer Integration: Primary CRM Customer Records (cust_info) joined with ERP Location (loc_a101) and Demographic data (cust_az12) via unique ID mapping (cst_key / cid).Product Integration: Primary CRM Product Records (prd_info) joined with ERP Product Category hierarchy (px_cat_g1v2) using category key mapping.🌟 3. Gold Layer Data Model (Star Schema)The analytical Gold Layer is structured as a Star Schema, optimized for fast aggregation and business performance reporting:Plaintext                           +------------------------+
+                           |   gold.dim_customers   |
+                           +------------------------+
+                           | PK  customer_key       |
+                           |     customer_id        |
+                           |     customer_number    |
+                           |     first_name         |
+                           |     last_name          |
+                           |     country            |
+                           |     marital_status     |
+                           |     gender             |
+                           |     birth_date         |
+                           |     create_date        |
+                           +------------------------+
+                                       |
+                                       | 1
+                                       |
+                                       | N
+                          +--------------------------+
+                          |     gold.fact_sales      |
+                          +--------------------------+
+                          | FK  order_number         |
+                          | FK  product_key          |
+                          | FK  customer_key         |
+                          |     order_date           |
+                          |     shipping_date        |
+                          |     due_date             |
+                          |     sales_amount         |
+                          |     quantity             |
+                          |     price                |
+                          +--------------------------+
+                                       |
+                                       | N
+                                       |
+                                       | 1
+                           +------------------------+
+                           |   gold.dim_products    |
+                           +------------------------+
+                           | PK  product_key        |
+                           |     product_id         |
+                           |     product_number     |
+                           |     product_name       |
+                           |     category_id        |
+                           |     category           |
+                           |     subcategory        |
+                           |     maintenance        |
+                           |     cost               |
+                           |     product_line       |
+                           |     start_date         |
+                           +------------------------+
+📁 4. Repository Directory StructurePlaintext├── datasets/
+│   ├── source_crm/                   -- Raw CSV files for CRM data
+│   └── source_erp/                   -- Raw CSV files for ERP data
 ├── docs/
-│   ├── Architecture.png              -- High-Level Data Architecture Diagram
-│   ├── Data_Flow.png                 -- Data Flow Diagram
-│   ├── Data_Integration.png          -- CRM & ERP Entity Mapping Diagram
-│   └── Star_Schema_Model.png         -- Data Model Diagram
+│   ├── Data Architecture.png         -- High-Level Data Architecture Diagram
+│   ├── data flow.png                 -- Data Flow Diagram
+│   ├── Data Integration.png          -- CRM & ERP Entity Mapping Diagram
+│   └── *.drawio                      -- Editable diagram files
+├── scripts/
+│   ├── init_database.sql             -- Database and Schemas (Bronze, Silver, Gold) Creation
+│   ├── Bronze/                       -- Bronze Layer DDL and Load Procedures
+│   ├── Silver/                       -- Silver Layer DDL and ETL Procedures
+│   ├── Gold/                         -- Gold Layer Views (Star Schema)
+│   ├── reports/                      -- Business Intelligence Views (Customer & Product Reports)
+│   └── analysis/                     -- Business Analytics & Change Over Time Queries
+├── test Silver & gold/
+│   ├── quality checks silver.sql     -- Data Cleansing & Quality Assurance Queries for Silver
+│   └── quality checks gold.sql       -- Integrity Validation Queries for Gold
 └── README.md                         -- Project Documentation
-🛠️ 5. Key ETL & Transformation HighlightsDeduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.Handling Missing / Null Values: Standardized strings with TRIM() and mapped missing values (NULL, empty strings) to 'n/a'.Data Normalization: Normalized gender flags ('M', 'Male', 'F', 'Female') and marital statuses into unified clean values.Data Consistency Checks: Verified pricing equations ($Sales = Quantity \times Price$) and filtered out corrupted negative values or invalid future date ranges.SCD Handling (Type 1/Type 2 logic): Implemented historical date range calculations using LEAD() functions for product validity windows (prd_start_dt, prd_end_dt).🚀 6. How to Run the ProjectPrerequisitesMicrosoft SQL Server (2019+ recommended)SQL Server Management Studio (SSMS) or Azure Data StudioExecution StepsInitialize Database: Run 01_init_database.sql to build the Data_Warehouse DB and schemas.Create & Load Bronze Layer: Execute 02_ddl_bronze.sql, update file paths in 03_load_bronze.sql, and run EXEC bronze.load_bronze;.Create & Load Silver Layer: Execute 04_ddl_silver.sql and run EXEC silver.load_silver;.Build Gold Layer: Execute 06_ddl_gold.sql to create analytical views.Run Reports & Quality Checks: Execute scripts 07_gold_reports.sql and 08_data_quality_checks.sql.📊 7. Analytics & Business Reports IncludedThe repository contains pre-built Gold Reports for decision-makers:Product Report (gold.report_products): Evaluates revenue performance, product lifespan, order frequency, recency, and segments items into High-Performer, Mid-Range, or Low-Performer.Customer Report (gold.report_customers): Segments customers into VIP, Regular, or New based on spending and lifespan, while tracking Age Groups, Recency, Average Order Value (AOV), and Monthly Spend.👨‍💻 Author: Abdelrahman Taha📧 Contact / Portfolio: GitHub Profile | LinkedIn Profile
+🛠️ 5. Key ETL & Transformation HighlightsDeduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.Handling Missing / Null Values: Standardized strings with TRIM() and mapped missing values (NULL, empty strings) to 'n/a'.Data Normalization: Normalized gender flags ('M', 'Male', 'F', 'Female') and marital statuses into unified clean values.Data Consistency Checks: Verified pricing equations ($Sales = Quantity \times Price$) and filtered out corrupted negative values or invalid future date ranges.SCD Handling (Type 1/Type 2 logic): Implemented historical date range calculations using LEAD() functions for product validity windows (prd_start_dt, prd_end_dt).
+
+🚀 6. How to Run the ProjectPrerequisitesMicrosoft SQL Server (2019+ recommended)SQL Server Management Studio (SSMS) or Azure Data StudioExecution StepsInitialize Database: Run scripts/init_database.sql to build the Data_Warehouse DB and schemas.Create & Load Bronze Layer: Execute scripts inside scripts/Bronze/ to define tables and load CSVs, then run EXEC bronze.load_bronze;.Create & Load Silver Layer: Execute scripts inside scripts/Silver/ for DDL and ETL transformations, then run EXEC silver.load_silver;.Build Gold Layer: Execute scripts inside scripts/Gold/ to create the analytical Star Schema views.Generate Reports: Execute scripts inside scripts/reports/ to set up business intelligence reporting views.Run Quality Checks: Use the files in test Silver & gold/ to validate the integrity of your data model.
+
+📊 7. Analytics & Business Reports IncludedThe repository contains pre-built Gold Reports for decision-makers:Product Report (gold.report_products): Evaluates revenue performance, product lifespan, order frequency, recency, and segments items into High-Performer, Mid-Range, or Low-Performer.Customer Report (gold.report_customers): Segments customers into VIP, Regular, or New based on spending and lifespan, while tracking Age Groups, Recency, Average Order Value (AOV), and Monthly Spend.
+
+👨‍💻 Author: Abdelrahman Taha📧
+Contact / Portfolio: GitHub Profile | LinkedIn Profile
