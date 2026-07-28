@@ -118,7 +118,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
 │   └── quality checks gold.sql       -- Integrity Validation Queries for Gold
 └── README.md                         -- Project Documentation
 ```
-🛠️ 5. Key ETL & Transformation Highlights
+## 🛠️ 5. Key ETL & Transformation Highlights
 
     - Deduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.
     
@@ -130,7 +130,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
     
     - SCD Handling (Type 1/Type 2 logic): Implemented historical date range calculations using LEAD() functions for product validity windows (prd_start_dt, prd_end_dt).
 
-🚀 6. How to Run the Project
+## 🚀 6. How to Run the Project
 
     Prerequisites
     
@@ -152,7 +152,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
       
       - Run Quality Checks: Use the files in test Silver & gold/ to validate the integrity of your data model.
 
-📊 7. Analytics & Business Reports Included
+## 📊 7. Analytics & Business Reports Included
 
 The repository contains pre-built Gold Reports for decision-makers:
 
@@ -160,6 +160,6 @@ The repository contains pre-built Gold Reports for decision-makers:
     
     - Customer Report (gold.report_customers): Segments customers into VIP, Regular, or New based on spending and lifespan, while tracking Age Groups, Recency, Average Order Value (AOV), and Monthly Spend.
 
-👨‍💻 Author: Abdelrahman Taha
+## 👨‍💻 Author: Abdelrahman Taha
 
-📧 Contact / Portfolio: GitHub Profile | LinkedIn Profile
+## 📧 Contact / Portfolio: GitHub Profile | LinkedIn Profile
