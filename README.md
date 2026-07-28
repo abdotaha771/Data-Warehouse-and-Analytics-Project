@@ -65,7 +65,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
                           +--------------------------+
                           |     gold.fact_sales      |
                           +--------------------------+
-                          | FK  order_number         |
+                          |     order_number         |
                           | FK  product_key          |
                           | FK  customer_key         |
                           |     order_date           |
