@@ -1,4 +1,4 @@
-# 🏢 Enterprise Data Warehouse & Analytics Project (SQL Server)
+# Enterprise Data Warehouse & Analytics Project (SQL Server)
 
 ![SQL Server](https://img.shields.io/badge/Database-MS%20SQL%20Server-red?style=for-the-badge&logo=microsoftsqlserver)
 ![Data Warehouse](https://img.shields.io/badge/Architecture-Medallion%20(Bronze%2FSilver%2FGold)-blue?style=for-the-badge)
@@ -8,13 +8,13 @@ Welcome to the **Enterprise Data Warehouse and Business Intelligence Project** r
 
 ---
 
-## 📐 1. System Data Architecture
+## 1. System Data Architecture
 
 The project adopts the **Medallion Architecture** pattern, structured into three progressive layers to process and elevate data quality:
 
 ![Data Architecture](docs/Data%20Architecture.png)
 
-### 🏛️ Medallion Layers Detailed Summary
+### Medallion Layers Detailed Summary
 
 | Layer | Object Type | Loading Strategy | Transformation Logic | Data Model |
 | :--- | :--- | :--- | :--- | :--- |
@@ -24,22 +24,22 @@ The project adopts the **Medallion Architecture** pattern, structured into three
 
 ---
 
-## 🔀 2. Data Flow & Integration Pipeline
+## 2. Data Flow & Integration Pipeline
 
-### 🔄 Data Flow Across Layers
+### Data Flow Across Layers
 Data moves sequentially through the layers, ensuring maximum data integrity and quality enforcement before analytical queries run.
 
 1. **ERP & CRM Datasets** $\rightarrow$ Loaded into **Bronze Layer** (`bronze.crm_*`, `bronze.erp_*`).
 2. **Bronze Tables** $\rightarrow$ Cleansed and standardized into **Silver Layer** (`silver.crm_*`, `silver.erp_*`).
 3. **Silver Tables** $\rightarrow$ Modeled into **Gold Dimensions & Facts** (`gold.dim_customers`, `gold.dim_products`, `gold.fact_sales`).
 
-### 🔗 Source Data Integration Strategy
+###  Source Data Integration Strategy
 - **Customer Integration**: Primary CRM Customer Records (`cust_info`) joined with ERP Location (`loc_a101`) and Demographic data (`cust_az12`) via unique ID mapping (`cst_key` / `cid`).
 - **Product Integration**: Primary CRM Product Records (`prd_info`) joined with ERP Product Category hierarchy (`px_cat_g1v2`) using category key mapping.
 
 ---
 
-## 🌟 3. Gold Layer Data Model (Star Schema)
+##  3. Gold Layer Data Model (Star Schema)
 
 The analytical Gold Layer is structured as a **Star Schema**, optimized for fast aggregation and business performance reporting:
 
@@ -118,7 +118,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
 │   └── quality checks gold.sql       -- Integrity Validation Queries for Gold
 └── README.md                         -- Project Documentation
 ```
-## 🛠️ 5. Key ETL & Transformation Highlights
+##  5. Key ETL & Transformation Highlights
 
     - Deduplication: Applied ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) to pick the latest valid customer record.
     
@@ -130,7 +130,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
     
     - SCD Handling (Type 1/Type 2 logic): Implemented historical date range calculations using LEAD() functions for product validity windows (prd_start_dt, prd_end_dt).
 
-## 🚀 6. How to Run the Project
+##  6. How to Run the Project
 
     Prerequisites
     
@@ -152,7 +152,7 @@ The analytical Gold Layer is structured as a **Star Schema**, optimized for fast
       
       - Run Quality Checks: Use the files in test Silver & gold/ to validate the integrity of your data model.
 
-## 📊 7. Analytics & Business Reports Included
+##  7. Analytics & Business Reports Included
 
 The repository contains pre-built Gold Reports for decision-makers:
 
